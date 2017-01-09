@@ -3,10 +3,10 @@
 # de instalacion de Odoo en modo Cloud Stack
 
 # Odoo vars:
-odoo_admin_pass: jrsm161083
+odoo_admin_pass: chang3m3pl3453
 odoo_db_host: dbserver
 odoo_db_user: odoo
-odoo_db_pass: jrsm161083
+odoo_db_pass: chang3m3pl3453
 
 # App server vars:
 # LAN Section
