@@ -1,0 +1,39 @@
+---
+# Archivo que contiene la definicion de todas las variables para el proceso
+# de instalacion de Odoo en modo Cloud Stack
+
+# Odoo vars:
+odoo_admin_pass: jrsm161083
+odoo_db_host: dbserver
+odoo_db_user: odoo
+odoo_db_pass: jrsm161083
+
+# App server vars:
+# LAN Section
+appserver_lan_ip: 192.168.56.2
+appserver_lan_net: 192.168.56.0
+appserver_lan_mask: 255.255.255.0
+appserver_lan_mtu: 1450
+# WAN Section
+appserver_wan_ip: 192.168.0.4
+appserver_wan_network: 192.168.0.0
+appserver_wan_mask: 255.255.255.0
+appserver_wan_gateway: 192.168.0.1
+
+# Db server vars:
+# LAN Section
+dbserver_lan_ip: 192.168.56.3
+dbserver_lan_net: 192.168.56.0
+dbserver_lan_mask: 255.255.255.0
+dbserver_lan_mtu: 1450
+# WAN Section
+dbserver_wan_ip: 192.168.0.5
+dbserver_wan_network: 192.168.0.0
+dbserver_wan_mask: 255.255.255.0
+dbserver_wan_gateway: 192.168.0.1
+
+# PostgreSQL vars:
+db_storage_tablespace: /db_storage/tbsp_data_1
+db_storage_block_device: /dev/sdb
+
+

@@ -1,0 +1,144 @@
+- name: Install PostgreSQL
+  hosts: dbserver
+
+  vars:
+    postgresql_version: "9.6"
+    postgresql_package_version: "9.6.*-2.pgdg16.04+1"
+    postgresql_hba_mapping:
+      - { type: "local", database: "postgres", user: "all", address: "",             method: "peer" }
+      - { type: "local", database: "all",      user: "all", address: "",             method: "peer" }
+      - { type: "host",  database: "all",      user: "all", address: "127.0.0.1/32", method: "md5" }
+      - { type: "host",  database: "all",      user: "all", address: "appserver",    method: "md5" }
+
+  pre_tasks:
+    - name: Load PostgreSQL variables
+      include_vars: ../variables.yml
+
+    - name: Update apt
+      apt:
+        cache_valid_time: 1800
+        update_cache: yes
+      tags:
+        - build
+
+    - name: Install essential packages for DB Deployment
+      apt:
+        name: "{{ item.package }}"
+        state: latest
+        update_cache: yes
+      with_items:
+        - { package: "python-psycopg2" }
+        - { package: "linux-image-extra-virtual-lts-xenial" }
+        - { package: "jfsutils" }
+
+    - name: Add HugePages group
+      group:
+        gid: 9999
+        name: hugepages
+        state: present
+
+  post_tasks:
+    - name: Create pam_limits and sysctl files
+      file:
+        path: "{{ item.filename }}"
+        state: touch
+        mode: 0644
+      with_items:
+        - { filename: "/etc/sysctl.d/30-postgresql-shm.conf" }
+        - { filename: "/etc/security/limits.d/99-postgres.conf" }
+
+    - name: Joining Postgres user to HugePages group
+      user: name=postgres groups=hugepages append=yes
+
+    - name: Sysctl tuning
+      sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        sysctl_file: /etc/sysctl.d/30-postgresql-shm.conf
+        state: present
+        reload: yes
+      with_items:
+        - { name: "vm.overcommit_memory", value: "2" }
+        - { name: "vm.nr_hugepages", value: "148" }
+        - { name: "vm.hugetlb_shm_group", value: "9999" }
+        - { name: "vm.hugepages_treat_as_movable", value: "0" }
+        - { name: "vm.nr_overcommit_hugepages", value: "64" }
+
+    - name: /etc/security/limits.conf configuration
+      pam_limits:
+        domain: "{{ item.domain }}"
+        limit_type: "{{ item.limit_type }}"
+        limit_item: "{{ item.limit_item }}"
+        value: "{{ item.value }}"
+        dest: /etc/security/limits.d/99-postgres.conf
+      with_items:
+        - { domain: "*", limit_type: "soft", limit_item: "stack", value: "819200" }
+        - { domain: "*", limit_type: "hard", limit_item: "stack", value: "819200" }
+        - { domain: "@hugepages", limit_type: "soft", limit_item: "memlock", value: "unlimited" }
+        - { domain: "@hugepages", limit_type: "hard", limit_item: "memlock", value: "unlimited" }
+
+    - name: Create directory for db_storage tablespace
+      file:
+        path: "{{ db_storage_tablespace }}"
+        state: directory
+        mode: 0755
+        owner: postgres
+        group: postgres
+
+    - name: Create filesystem for db_storage tablespace
+      filesystem:
+        fstype: jfs
+        dev: "{{ db_storage_block_device }}"
+        force: yes
+        opts: "-q"
+
+    - name: Creating mount point for db_storage tablespace
+      mount:
+        name: "{{ db_storage_tablespace }}"
+        src: "{{ db_storage_block_device }}"
+        fstype: jfs
+        opts: "rw,nosuid,nodev,noexec,noatime,nodiratime"
+        state: present
+
+    - name: Mounting /db_storage/tbsp_data_1
+      mount:
+        name: "{{ db_storage_tablespace }}"
+        src: "{{ db_storage_block_device }}"
+        fstype: jfs
+        opts: "rw,nosuid,nodev,noexec,noatime,nodiratime"
+        state: mounted
+
+    - name: Set ownership for db_storage tablespace
+      file:
+        path: "{{ db_storage_tablespace }}"
+        state: directory
+        mode: 0755
+        recurse: yes
+        owner: postgres
+        group: postgres
+
+    - name: Create odoo user on database
+      postgresql_user:
+        name: "{{ odoo_db_user }}"
+        password: "{{ odoo_db_pass }}"
+        role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER
+      become: true
+      become_user: postgres
+
+    - name: Creating db_storage tablespace on PostgreSQL
+      command: /usr/bin/psql -c "create tablespace db_storage owner odoo location '{{ db_storage_tablespace }}';"
+      become: true
+      become_user: postgres
+
+    - name: Setting the db_storage tablespace as default for template1 DB 
+      command: /usr/bin/psql -c "alter database template1 tablespace db_storage;"
+      become: true
+      become_user: postgres
+
+    - name: Setting the db_storage tablespace as default for newly created DB's
+      command: /usr/bin/psql -c "alter database template1 set default_tablespace to db_storage;"
+      become: true
+      become_user: postgres
+
+  roles:
+    - { role: "azavea.postgresql" }

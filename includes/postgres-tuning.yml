@@ -1,0 +1,34 @@
+---
+- hosts: dbserver
+  vars:
+    pg_version: 9.6
+    listen_address: dbserver
+    max_conn: 64
+    shared_buffers: 768MB
+    effective_cache_size: 2304MB
+    work_mem: 19MB
+    temp_buffers: 24MB
+    max_stack_depth: 7MB
+    maintenance_work_mem: 192MB
+    min_wal_size: 2GB
+    max_wal_size: 4GB
+    checkpoint_completion_target: 0.9
+    effective_io_concurrency: 384
+    max_worker_processes: 24
+    wal_buffers: 16MB
+    default_statistics_target: 100
+    autovacuum_max_workers: 6
+    autovacuum_vacuum_threshold: 250
+    autovacuum_vacuum_scale_factor: 0.01
+    autovacuum_analyze_scale_factor: 0.03
+    autovacuum_vacuum_cost_delay: 10ms
+    autovacuum_vacuum_cost_limit: -1
+
+  tasks:
+    - name: PostgreSQL Tuning and Config 
+      template: src=../templates/postgresql.conf.j2 dest=/etc/postgresql/{{ pg_version }}/main/postgresql.conf 
+
+  handlers:
+    - name: Restart PostgreSQL
+      action: service name=postgresql state=restarted
+

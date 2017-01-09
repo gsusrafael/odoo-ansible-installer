@@ -1,0 +1,6 @@
+[odoo_stack]
+appserver ansible_host=192.168.0.4 ansible_user=root ansible_ssh_pass='jrsm161083'
+dbserver  ansible_host=192.168.0.5 ansible_user=root ansible_ssh_pass='jrsm161083'
+
+#appserver ansible_host=192.168.56.2 ansible_user=root ansible_ssh_pass='jrsm161083'
+#dbserver  ansible_host=192.168.56.3 ansible_user=root ansible_ssh_pass='jrsm161083'

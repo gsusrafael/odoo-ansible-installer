@@ -1,0 +1,38 @@
+---
+- hosts: dbserver
+  roles:
+    - role: dresden-weekly.network-interfaces
+      network_interfaces:
+        - device: eth0
+          description: DBSERVER Wan interface
+          auto: true
+          family: inet
+          method: static
+          address: "{{ dbserver_wan_ip }}"
+          network: "{{ dbserver_wan_network }}"
+          netmask: "{{ dbserver_wan_mask }}"
+          gateway: "{{ dbserver_wan_gateway }}"
+          nameservers:
+            - 8.8.8.8
+            - 8.8.4.4
+
+        - device: eth1
+          description: DBSERVER Lan traffic interface
+          auto: true
+          family: inet
+          method: static
+          address: "{{ dbserver_lan_ip }}"
+          network: "{{ dbserver_lan_net }}" 
+          netmask: "{{ dbserver_lan_mask }}"
+          mtu: "{{ dbserver_lan_mtu }}"
+
+  pre_tasks:
+    - name: Load variables
+      include_vars: ../variables.yml
+
+  post_tasks:
+    - name: "Build hosts file"
+      lineinfile: dest=/etc/hosts line={{ item.line }} state=present
+      with_items:
+          - { line: "{{ dbserver_lan_ip }}    dbserver" }
+          - { line: "{{ appserver_lan_ip }}    appserver" }

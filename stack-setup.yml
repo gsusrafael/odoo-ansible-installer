@@ -1,0 +1,15 @@
+---
+# Este es el archivo principal para la consolidacion de las configuraciones
+# cada [include] hace referencia a un segmento que puede ser ejecutado de
+# manera individual.
+#
+# El archivo [variables.yml] contiene las variables que modifica el
+# comportamiento del conjunto de PlayBooks de Ansible para esta labor.
+#
+# Autor: Jesus R. Sanchez
+#
+- include: includes/hosts.yml
+- include: includes/postgres.yml
+- include: includes/postgres-tuning.yml
+- include: includes/nginx.yml
+- include: includes/odoo.yml
