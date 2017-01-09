@@ -32,6 +32,9 @@ dbserver_wan_network: 192.168.0.0
 dbserver_wan_mask: 255.255.255.0
 dbserver_wan_gateway: 192.168.0.1
 
+# Nginx vars:
+nginx_odoo_domain: "*.midominio.do"
+
 # PostgreSQL vars:
 db_storage_tablespace: /db_storage/tbsp_data_1
 db_storage_block_device: /dev/sdb

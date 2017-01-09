@@ -64,7 +64,7 @@
       nginx_sites:
         odoo:
           - listen 80
-          - server_name *.neotec.do
+          - server_name {{ nginx_odoo_domain }}
           - access_log /var/log/nginx/odoo.access.log
           - error_log /var/log/nginx/odoo.error.log
           - |
@@ -85,3 +85,6 @@
               proxy_buffer_size 2k;
               proxy_pass http://odoochat;
             }
+  pre_tasks:
+    - name: Load Nginx Odoo Variables
+      include_vars: ../variables.yml
