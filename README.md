@@ -7,4 +7,12 @@ This installer depends on the following Ansible Roles:
   - jdauphant.nginx, v2.6 
   - dresden-weekly.network-interfaces, 1.0
 
-Please check the variables.yml file for custom configurations.
+To install the required Ansible Roles, you must issue the following commmand:
+    `ansible-galaxy install <role-name>`
+
+To run this installer, you must use:
+    `ansible-playbook --flush-cache -i hosts stack-setup.yml`
+
+
+Please check the variables.yml file for custom configurations, and the hosts
+file for initial server node list
