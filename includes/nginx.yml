@@ -88,3 +88,34 @@
   pre_tasks:
     - name: Load Nginx Odoo Variables
       include_vars: ../variables.yml
+
+  post_tasks:
+    - name: Creating cache directory for static files
+      file:
+        path: "{{ nginx_cache_dir }}"
+        state: directory
+        mode: 0755
+        owner: "www-data"
+        group: "www-data"
+    
+    - name: Adding cache mount point
+      mount:
+        name: "{{ nginx_cache_dir }}"
+        src: tmpfs
+        fstype: tmpfs
+        opts: "rw,nodev,noexec,noatime,size=1048576k,mode=777"
+        state: present
+
+    - name: Mounting nginx cache
+      mount:
+        name: "{{ nginx_cache_dir }}"
+        src: tmpfs
+        fstype: tmpfs
+        opts: "rw,nodev,noexec,noatime,size=1048576k,mode=777"
+        state: mounted
+
+    - name: Restarting Nginx
+      service:
+        name: nginx
+        state: restarted
+
