@@ -3,7 +3,7 @@
   roles:
     - role: dresden-weekly.network-interfaces
       network_interfaces:
-        - device: eth0
+        - device: dbserver_wan_interface
           description: DBSERVER Wan interface
           auto: true
           family: inet
@@ -16,7 +16,7 @@
             - 8.8.8.8
             - 8.8.4.4
 
-        - device: eth1
+        - device: dbserver_lan_interface
           description: DBSERVER Lan traffic interface
           auto: true
           family: inet
