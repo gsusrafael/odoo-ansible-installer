@@ -2,7 +2,7 @@
   hosts: appserver
   become: yes
   roles:
-    - ansible-odoo
+    - sebalix.odoo
   vars:
     - odoo_version: 9.0
     - odoo_install_type: standard
