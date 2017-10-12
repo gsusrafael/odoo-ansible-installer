@@ -4,12 +4,13 @@
   roles:
     - sebalix.odoo
   vars:
-    - odoo_version: 9.0
+    - odoo_version: 10.0
     - odoo_install_type: standard
     - odoo_config_admin_passwd: "{{ odoo_admin_pass }}"
     - odoo_config_db_host: "{{ odoo_db_host }}"
     - odoo_config_db_user: "{{ odoo_db_user }}"
     - odoo_config_db_passwd: "{{ odoo_db_pass }}"
+    - odoo_config_file: /etc/odoo.conf
     - odoo_init: True
     - odoo_repo_type: git
     - odoo_repo_url: https://github.com/odoo/odoo.git
@@ -21,35 +22,36 @@
     - odoo_config_limit_time_cpu: 60
     - odoo_config_limit_time_real: 120
     - odoo_config_proxy_mode: True
+    - odoo_repo_dest: "/opt/{{ odoo_user }}/v10-core"
     - odoo_config_logfile: /var/log/odoo/odoo-server.log
     - odoo_config_logrotate: True
-    - odoo_config_data_dir: "/home/{{ odoo_user }}/.local/share/Odoo"
+    - odoo_config_data_dir: "/opt/{{ odoo_user }}/.local/share/Odoo"
     - odoo_config_addons_path:
-        - "/home/{{ odoo_user }}/odoo/server/openerp/addons"
-        - "/home/{{ odoo_user }}/odoo/server/addons"
-        - "/home/{{ odoo_user }}/odoo/server/external/marcos_addons"
-        - "/home/{{ odoo_user }}/odoo/server/external/marcos_community"
-        - "/home/{{ odoo_user }}/odoo/server/external/odoo_private_addons"
+        - "/opt/{{ odoo_user }}/v10-core/server/openerp/addons"
+        - "/opt/{{ odoo_user }}/v10-core/server/addons"
+#        - "/opt/{{ odoo_user }}/odoo/server/external/marcos_addons"
+#        - "/opt/{{ odoo_user }}/odoo/server/external/marcos_community"
+#        - "/opt/{{ odoo_user }}/odoo/server/external/odoo_private_addons"
 
   pre_tasks:
     - name: Load Odoo variables
       include_vars: ../variables.yml
 
-  post_tasks:
-    - name: Cloning Marcos addons
-      git:
-        repo: https://github.com/eneldoserrata/marcos_addons.git
-        dest: "/home/{{ odoo_user }}/odoo/server/external/marcos_addons"
-        clone: yes
+#  post_tasks:
+#    - name: Cloning Marcos addons
+#      git:
+#        repo: https://github.com/eneldoserrata/marcos_addons.git
+#        dest: "/opt/{{ odoo_user }}/odoo/server/external/marcos_addons"
+#        clone: yes
 
-    - name: Cloning Marcos Community addons
-      git:
-        repo: https://github.com/MarcosCommunity/marcos_community_addons.git
-        dest: "/home/{{ odoo_user }}/odoo/server/external/marcos_community"
-        clone: yes
+#    - name: Cloning Marcos Community addons
+#      git:
+#        repo: https://github.com/MarcosCommunity/marcos_community_addons.git
+#        dest: "/home/{{ odoo_user }}/odoo/server/external/marcos_community"
+#        clone: yes
 
-    - name: Cloning Marcos Odoo private addons
-      git:
-        repo: https://github.com/eneldoserrata/odoo_private_addons.git
-        dest: "/home/{{ odoo_user }}/odoo/server/external/odoo_private_addons"
-        clone: yes
+#    - name: Cloning Marcos Odoo private addons
+#      git:
+#        repo: https://github.com/eneldoserrata/odoo_private_addons.git
+#        dest: "/home/{{ odoo_user }}/odoo/server/external/odoo_private_addons"
+#        clone: yes

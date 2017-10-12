@@ -3,7 +3,7 @@
 
   vars:
     postgresql_version: "9.6"
-    postgresql_package_version: "9.6.*-2.pgdg16.04+1"
+    postgresql_package_version: "9.6.*.pgdg16.04+2"
     postgresql_hba_mapping:
       - { type: "local", database: "postgres", user: "all", address: "",             method: "peer" }
       - { type: "local", database: "all",      user: "all", address: "",             method: "peer" }
@@ -30,6 +30,7 @@
         - { package: "python-psycopg2" }
         - { package: "linux-image-extra-virtual-lts-xenial" }
         - { package: "jfsutils" }
+        - { package: "xfsprogs" }
 
     - name: Add HugePages group
       group:
@@ -103,8 +104,8 @@
         value: "{{ item.value }}"
         dest: /etc/security/limits.d/99-postgres.conf
       with_items:
-        - { domain: "*", limit_type: "soft", limit_item: "stack", value: "819200" }
-        - { domain: "*", limit_type: "hard", limit_item: "stack", value: "819200" }
+        - { domain: "@hugepages", limit_type: "soft", limit_item: "stack",   value: "unlimited" }
+        - { domain: "@hugepages", limit_type: "hard", limit_item: "stack",   value: "unlimited" }
         - { domain: "@hugepages", limit_type: "soft", limit_item: "memlock", value: "unlimited" }
         - { domain: "@hugepages", limit_type: "hard", limit_item: "memlock", value: "unlimited" }
 
@@ -118,24 +119,24 @@
 
     - name: Create filesystem for db_storage tablespace
       filesystem:
-        fstype: jfs
+        fstype: xfs
         dev: "{{ db_storage_block_device }}"
         force: yes
-        opts: "-q"
+        opts: "-q -f"
 
     - name: Creating mount point for db_storage tablespace
       mount:
         name: "{{ db_storage_tablespace }}"
         src: "{{ db_storage_block_device }}"
-        fstype: jfs
+        fstype: xfs
         opts: "rw,nosuid,nodev,noexec,noatime,nodiratime"
         state: present
 
-    - name: Mounting /db_storage/tbsp_data_1
+    - name: Mounting /db_storage/tbsp_data_cm
       mount:
         name: "{{ db_storage_tablespace }}"
         src: "{{ db_storage_block_device }}"
-        fstype: jfs
+        fstype: xfs
         opts: "rw,nosuid,nodev,noexec,noatime,nodiratime"
         state: mounted
 

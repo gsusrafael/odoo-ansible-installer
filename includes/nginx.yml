@@ -117,12 +117,12 @@
         value: "{{ item.value }}"
         dest: /etc/security/limits.d/99-nginx.conf
       with_items:
-        - { domain: "*",          limit_type: "soft", limit_item: "stack",   value: "819200" }
-        - { domain: "*",          limit_type: "hard", limit_item: "stack",   value: "819200" }
-        - { domain: "www-data",   limit_type: "soft", limit_item: "nofile",  value: "65535" }
-        - { domain: "www-data",   limit_type: "hard", limit_item: "nofile",  value: "65535" }
+        - { domain: "@hugepages", limit_type: "soft", limit_item: "stack",   value: "unlimited" }
+        - { domain: "@hugepages", limit_type: "hard", limit_item: "stack",   value: "unlimited" }
         - { domain: "@hugepages", limit_type: "soft", limit_item: "memlock", value: "unlimited" }
         - { domain: "@hugepages", limit_type: "hard", limit_item: "memlock", value: "unlimited" }
+        - { domain: "www-data",   limit_type: "soft", limit_item: "nofile",  value: "65535" }
+        - { domain: "www-data",   limit_type: "hard", limit_item: "nofile",  value: "65535" }
 
     - name: Creating cache directory for static files
       file:
@@ -137,7 +137,7 @@
         name: "{{ nginx_cache_dir }}"
         src: tmpfs
         fstype: tmpfs
-        opts: "rw,nodev,noexec,noatime,size=1048576k,mode=777"
+        opts: "rw,nodev,noexec,noatime,size=1048576k,mode=1777"
         state: present
 
     - name: Mounting nginx cache
@@ -145,7 +145,7 @@
         name: "{{ nginx_cache_dir }}"
         src: tmpfs
         fstype: tmpfs
-        opts: "rw,nodev,noexec,noatime,size=1048576k,mode=777"
+        opts: "rw,nodev,noexec,noatime,size=1048576k,mode=1777"
         state: mounted
 
     - name: Sysctl tuning for Nginx

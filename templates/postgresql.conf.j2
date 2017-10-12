@@ -1,29 +1,37 @@
-# common configs
-data_directory = '/var/lib/postgresql/{{ pg_version }}/main'		
-hba_file = '/etc/postgresql/{{ pg_version }}/main/pg_hba.conf'	
-ident_file = '/etc/postgresql/{{ pg_version }}/main/pg_ident.conf'	
+# PostgreSQL common configs
+# ----------------------------------
+
+data_directory = '/var/lib/postgresql/{{ pg_version }}/main'
+hba_file = '/etc/postgresql/{{ pg_version }}/main/pg_hba.conf'
+ident_file = '/etc/postgresql/{{ pg_version }}/main/pg_ident.conf'
 external_pid_file = '/var/run/postgresql/{{ pg_version }}-main.pid'
 listen_addresses = '{{ listen_address }}, localhost'
-port = 5432	
-huge_pages = try			
-unix_socket_directories = '/var/run/postgresql'	
-ssl = true				
-ssl_cert_file = '/etc/ssl/certs/ssl-cert-snakeoil.pem'		
-ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key'		
-dynamic_shared_memory_type = posix	
-log_line_prefix = '%t [%p-%l] %q%u@%d '			
+port = 5432
+huge_pages = try
+unix_socket_directories = '/var/run/postgresql'
+ssl = true
+ssl_cert_file = '/etc/ssl/certs/ssl-cert-snakeoil.pem'
+ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key'
+dynamic_shared_memory_type = posix
+log_line_prefix = '%t [%p-%l] %q%u@%d '
 log_timezone = 'localtime'
-cluster_name = '{{ pg_version }}/main'			
+cluster_name = '{{ pg_version }}/main'
 stats_temp_directory = '/var/run/postgresql/{{ pg_version }}-main.pg_stat_tmp'
 datestyle = 'iso, mdy'
 timezone = 'localtime'
-lc_messages = 'en_US.UTF-8'			
-lc_monetary = 'en_US.UTF-8'			
-lc_numeric = 'en_US.UTF-8'			
-lc_time = 'en_US.UTF-8'				
+lc_messages = 'en_US.UTF-8'
+lc_monetary = 'en_US.UTF-8'
+lc_numeric = 'en_US.UTF-8'
+lc_time = 'en_US.UTF-8'
 default_text_search_config = 'pg_catalog.english'
 
 # PgBadger Setting for log analysis 
+# -----------------------------------
+#
+#  ** WARNING **
+# Heavy disk storage loading, please be careful...
+#
+
 log_line_prefix = '%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '
 log_min_duration_statement = 0
 log_checkpoints = on
@@ -34,47 +42,51 @@ log_temp_files = 0
 log_autovacuum_min_duration = 0
 log_error_verbosity = default
 
-# PgTune Settings
+# PgTune Settings - My Setup
+# --------------------------
 # max_connections = 64
-max_connections = {{ max_conn }}
 # shared_buffers = 768MB
-shared_buffers = {{ shared_buffers }}
 # effective_cache_size = 2304MB
-effective_cache_size = {{ effective_cache_size }}
 # work_mem = 19MB
-work_mem = {{ work_mem }}
 # temp_buffers = 24MB
-temp_buffers = {{ temp_buffers }}
 # max_stack_depth = 7MB
-max_stack_depth = {{ max_stack_depth }}
 # maintenance_work_mem = 192MB
-maintenance_work_mem = {{ maintenance_work_mem }}
 # min_wal_size = 2GB
-min_wal_size = {{ min_wal_size }}
 # max_wal_size = 4GB
-max_wal_size = {{ max_wal_size }}
 # checkpoint_completion_target = 0.9
-checkpoint_completion_target = {{ checkpoint_completion_target }}
 # effective_io_concurrency = 384
-effective_io_concurrency = {{ effective_io_concurrency }}
 # max_worker_processes = 24 
-max_worker_processes = {{ max_worker_processes }}
 # wal_buffers = 16MB
-wal_buffers = {{ wal_buffers }}
 # default_statistics_target = 100
+
+max_connections = {{ max_conn }}
+shared_buffers = {{ shared_buffers }}
+effective_cache_size = {{ effective_cache_size }}
+work_mem = {{ work_mem }}
+temp_buffers = {{ temp_buffers }}
+max_stack_depth = {{ max_stack_depth }}
+maintenance_work_mem = {{ maintenance_work_mem }}
+min_wal_size = {{ min_wal_size }}
+max_wal_size = {{ max_wal_size }}
+checkpoint_completion_target = {{ checkpoint_completion_target }}
+effective_io_concurrency = {{ effective_io_concurrency }}
+max_worker_processes = {{ max_worker_processes }}
+wal_buffers = {{ wal_buffers }}
 default_statistics_target = {{ default_statistics_target }}
 
-# Autovacuum
-autovacuum = on
+# Autovacuum - My Setup
+# --------------------------
 # autovacuum_max_workers = 6
-autovacuum_max_workers = {{ autovacuum_max_workers }}
 # autovacuum_vacuum_threshold = 250
-autovacuum_vacuum_threshold = {{ autovacuum_vacuum_threshold }}
 # autovacuum_vacuum_scale_factor = 0.01
-autovacuum_vacuum_scale_factor = {{ autovacuum_vacuum_scale_factor }}
 # autovacuum_analyze_scale_factor = 0.03
-autovacuum_analyze_scale_factor = {{ autovacuum_analyze_scale_factor }}
 # autovacuum_vacuum_cost_delay = 10ms
-autovacuum_vacuum_cost_delay = {{ autovacuum_vacuum_cost_delay }}
 # autovacuum_vacuum_cost_limit = -1
+
+autovacuum = on
+autovacuum_max_workers = {{ autovacuum_max_workers }}
+autovacuum_vacuum_threshold = {{ autovacuum_vacuum_threshold }}
+autovacuum_vacuum_scale_factor = {{ autovacuum_vacuum_scale_factor }}
+autovacuum_analyze_scale_factor = {{ autovacuum_analyze_scale_factor }}
+autovacuum_vacuum_cost_delay = {{ autovacuum_vacuum_cost_delay }}
 autovacuum_vacuum_cost_limit = {{ autovacuum_vacuum_cost_limit }}
