@@ -37,7 +37,6 @@ nginx_odoo_domain: "*.midominio.do"
 nginx_cache_dir: /cache
 
 # PostgreSQL vars:
-db_storage_tablespace: /db_storage/tbsp_data_1
-db_storage_block_device: /dev/sdb
-
+db_storage_tablespace: /db_storage/tbsp_data_cm
+db_storage_block_device: /dev/vdb
 
